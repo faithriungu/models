@@ -168,13 +168,12 @@ footer, #MainMenu { visibility:hidden; }
 @st.cache_resource
 def load_models():
     base    = os.path.dirname(os.path.abspath(__file__))
-    mp      = os.path.join(base, 'models')
-    xgb     = joblib.load(os.path.join(mp, 'xgb_model.pkl'))
-    meta    = joblib.load(os.path.join(mp, 'fc_stack_meta.pkl'))
-    le_dict = joblib.load(os.path.join(mp, 'label_encoders.pkl'))
-    with open(os.path.join(mp, 'feature_names.txt')) as f:
+    xgb     = joblib.load(os.path.join(base, 'xgb_model.pkl'))
+    meta    = joblib.load(os.path.join(base, 'fc_stack_meta.pkl'))
+    le_dict = joblib.load(os.path.join(base, 'label_encoders.pkl'))
+    with open(os.path.join(base, 'feature_names.txt')) as f:
         features = f.read().splitlines()
-    with open(os.path.join(mp, 'model_metrics.json')) as f:
+    with open(os.path.join(base, 'model_metrics.json')) as f:
         metrics = json.load(f)
     return xgb, meta, le_dict, features, metrics
 
