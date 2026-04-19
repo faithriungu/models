@@ -168,12 +168,13 @@ footer, #MainMenu { visibility:hidden; }
 @st.cache_resource
 def load_models():
     base    = os.path.dirname(os.path.abspath(__file__))
-    xgb     = joblib.load(os.path.join(base, 'xgb_model.pkl'))
-    meta    = joblib.load(os.path.join(base, 'fc_stack_meta.pkl'))
-    le_dict = joblib.load(os.path.join(base, 'label_encoders.pkl'))
-    with open(os.path.join(base, 'feature_names.txt')) as f:
+    mp      = os.path.join(base, 'models')
+    xgb     = joblib.load(os.path.join(mp, 'xgb_model.pkl'))
+    meta    = joblib.load(os.path.join(mp, 'fc_stack_meta.pkl'))
+    le_dict = joblib.load(os.path.join(mp, 'label_encoders.pkl'))
+    with open(os.path.join(mp, 'feature_names.txt')) as f:
         features = f.read().splitlines()
-    with open(os.path.join(base, 'model_metrics.json')) as f:
+    with open(os.path.join(mp, 'model_metrics.json')) as f:
         metrics = json.load(f)
     return xgb, meta, le_dict, features, metrics
 
@@ -239,7 +240,6 @@ col1, col2, col3 = st.columns(3, gap="large")
 
 # ── Column 1: Personal & Location ────────────────────────────────
 with col1:
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">👤 Personal Information</div>',
                 unsafe_allow_html=True)
     gender     = st.selectbox("Gender", ["Female", "Male"])
@@ -254,18 +254,14 @@ with col1:
     hh_size    = st.slider("People in your household", 1, 20, 4)
     disability = st.selectbox("Disability Status",
                                ["Without Disability","With Disability"])
-    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">📍 Location</div>',
                 unsafe_allow_html=True)
     county       = st.selectbox("County of Residence", COUNTIES)
     cluster_type = st.selectbox("Type of Area", ["Urban","Rural"])
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Column 2: Technology & Income ────────────────────────────────
 with col2:
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">📱 Technology Access</div>',
                 unsafe_allow_html=True)
     mobile_own   = st.selectbox("Do you own a mobile phone?",
@@ -279,9 +275,7 @@ with col2:
         ["Yes","No"])
     has_id       = st.selectbox("Do you have a National ID Card?",
                                  ["Yes","No"])
-    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">💰 Income & Spending</div>',
                 unsafe_allow_html=True)
     monthly_exp = st.number_input(
@@ -305,28 +299,22 @@ with col2:
         "Casual / seasonal work",
         "Support from family or friends",
         "Other"])
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Column 3: Assets & Resilience ────────────────────────────────
 with col3:
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🏠 Assets You Own</div>',
                 unsafe_allow_html=True)
     st.caption("Tick everything that applies to your household")
     owns_tv      = st.checkbox("📺  Television set")
     has_internet = st.checkbox("🌐  Internet at home (modem / WiFi)")
-    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">💼 Income Sources</div>',
                 unsafe_allow_html=True)
     st.caption("Tick all income sources in your household")
     inc_farming  = st.checkbox("🌾  Farming or keeping livestock")
     inc_employed = st.checkbox("💼  Regular employment / salary")
     inc_business = st.checkbox("🏪  Running own business")
-    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🛡️ Financial Resilience</div>',
                 unsafe_allow_html=True)
     st.caption("Answer honestly — this helps assess your financial wellbeing")
@@ -347,7 +335,6 @@ with col3:
     fin_healthy = st.selectbox(
         "Overall, would you say you are financially healthy?",
         ["Yes","No"], key="s5")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Compute composites ────────────────────────────────────────────
 log_exp = float(np.log1p(monthly_exp))
